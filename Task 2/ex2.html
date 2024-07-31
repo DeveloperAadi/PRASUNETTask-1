@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes backgroundShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(270deg, #74cfeb, #acb6e5, #f8c3a3);
+      background-size: 600% 600%;
+      animation: backgroundShift 10s ease infinite;
+
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      height: 100vh;
+      margin: 0;
+    }
+    
+    #stopwatch {
+      text-align: center;
+      
+      background-color: #fff;
+      
+      padding: 20px;
+      
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+      
+      border-radius: 10px;
+    }
+    
+    #time {
+      font-size: 3em;
+      
+      margin-bottom: 20px;
+      
+      color: #333;
+      
+      animation: pulse 2s infinite;
+    }
+    
+    button {
+     padding:10px20px; 
+     font-size:16px; 
+     margin:0px5px; 
+     cursor:pointer; 
+    }
+    
+    ul {
+     list-style-type:none; 
+     padding-left:0; 
+    }
+    </style>
+</head>
+<body style="font-family: Arial, sans-serif; background: linear-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,233,228,1) 100%); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+
+    <div id="stopwatch" style="text-align: center; background-color: #fff; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px;">
+      <div id="time" style="font-size: 3em; margin-bottom: 20px; color: #333; animation: pulse 2s infinite;">00:00:00</div>
+      <button id="startStop" onclick="startStop()" style="padding: 10px 20px; font-size: 16px; margin: 0 5px; cursor: pointer;">Start</button>
+      <button id="lap" onclick="lap()" style="padding: 10px 20px; font-size: 16px; margin: 0 5px; cursor: pointer;" disabled>Lap</button>
+      <button id="reset" onclick="reset()" style="padding: 10px 20px; font-size: 16px; margin: 0 5px; cursor: pointer;" disabled>Reset</button>
+      <ul id="laps" style="list-style-type: none; padding-left: 0;"></ul>
+    </div>
+
+<script>
+let startTime;
+let updatedTime;
+let difference;
+let tInterval;
+let running = false;
+
+function startStop() {
+  let startStopBtn = document.getElementById('startStop');
+  let lapBtn = document.getElementById('lap');
+  let resetBtn = document.getElementById('reset');
+  
+  if (!running) {
+    startTime = new Date().getTime();
+    tInterval = setInterval(getShowTime, 1);
+    running = true;
+    startStopBtn.textContent = 'Pause';
+    lapBtn.disabled = false;
+    resetBtn.disabled = true;
+  } else {
+    clearInterval(tInterval);
+    running = false;
+    startStopBtn.textContent = 'Resume';
+    lapBtn.disabled = true;
+    resetBtn.disabled = false;
+  }
+}
+
+function lap() {
+  if (running) {
+    let lapsContainer = document.getElementById('laps');
+    let li = document.createElement('li');
+    li.innerText = document.getElementById('time').textContent;
+    lapsContainer.appendChild(li);
+  }
+}
+
+function reset() {
+  clearInterval(tInterval);
+  running = false;
+  
+  document.getElementById('time').textContent = '00:00:00';
+  document.getElementById('laps').innerHTML = '';
+  
+  document.getElementById('startStop').textContent = 'Start';
+  
+  document.getElementById('lap').disabled = true;
+  document.getElementById('reset').disabled = true;
+}
+
+function getShowTime() {
+  updatedTime = new Date().getTime();
+  difference = updatedTime - startTime;
+
+  let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+  
+   hours   <10 ? hours   ='0'+hours : hours
+   minutes <10 ? minutes ='0'+minutes : minutes
+   seconds <10 ? seconds ='0'+seconds : seconds
+
+   document.getElementById('time').textContent=hours+':'+minutes+':'+seconds
+}
+</script>
+
+</body>
+</html>
